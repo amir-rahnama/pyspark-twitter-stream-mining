@@ -1,0 +1,22 @@
+{
+  "name": "html",
+  "homepage": "https://github.com/ambodi/spark-twitter-stream-mining",
+  "authors": [
+    "ambodi <amirrahnama@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3-cloud": "~1.0.5",
+    "d3": "~3.4.11"
+  }
+}
