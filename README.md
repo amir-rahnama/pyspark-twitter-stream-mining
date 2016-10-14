@@ -4,28 +4,32 @@
 I love python and I love Machine Learning, specially in real-time. Up to now, Apache Spark does not have any Twitter Stream integration, so I put up a little workaround to be able to use spark on twitter data. Even better, I integrated the result into visualizations. So far, there is only a d3 wordcloud but I am planning to add more.
 
 ###Getting Started
+* Install Docker and Docker-compose
 * Install Python and Pip
-* Install dependecies: ```pip install tornado``` & ```pip install psutil``` && ```pip install tweepy```
+* Install dependecies: ```pip install psutil``` && ```pip install tweepy``` && ```pip install websockets```
 * Make sure you have Apache Spark installed. This repo works with spark-1.5.1-bin-hadoop2.6 verison perfectly. After that, you just need to remember where you extracted spark, we call it ```$SPARK_HOME```, Ogey?
 * Get your API keys from [https://dev.twitter.com/](Twitter Developers) and put them in ```data/config.json```.
+* set `docker` in your `etc/hosts` to point to your machine
 
 ###Run Example
-First, run the Socket Echo Server with the following command:
+First, run the Kafka server with the following command:
 
 ```bash
-python sck.py
+docker-compose up
+
+```
+Then, fire up the stream source:
+
+
+```bash
+python twitter_stream.py
 ```
 
-It will run a TCP server on port 9999, then run the twitter feed:
+
+Now submit the ```trending_keywords_sparkjob.py``` to ```spark-submit```:
 
 ```bash
-python tweet.py
-```
-
-Now submit the ```frequent_words.py``` to ```spark-submit```:
-
-```bash
-$SPARK_HOME/bin/spark-submit sparkjob.py
+$SPARK_HOME/bin/spark-submit --jars jar/spark-streaming-kafka-assembly_2.10-1.5.1 sparkjob.py
 ```
 
 ```bash
@@ -48,7 +52,7 @@ Time: 2015-12-18 21:11:17
 After that, you are gonna have a stateful count of all realtime feed of twitter stream with most used words (stop words and non-alpha numeric words are striped). The log will show you the top 10 words sorted by number of appearence. Note that spark will create a folder called ```twitter-checkpoint``` to keep state and failovers.
 
 
-You should see the most frequent words in Tweets that have ```Python``` in them. Why Python? Becuase it's awesome! For now, change the query [here](https://github.com/ambodi/realtime-spark-twitter-stream-mining/blob/master/tweet.py#L19).
+You should see the most frequent words in Tweets that have ```Python``` in them. Why Python? Becuase it's awesome! For now, change the query [here](https://github.com/ambodi/realtime-spark-twitter-stream-mining/blob/master/tweet.py#L19). Also, [change the `topic` in the Kafka example] ().
 
 ###Real-time D3.js WordCloud
 
