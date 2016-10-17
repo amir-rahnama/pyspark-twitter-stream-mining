@@ -11,7 +11,6 @@ from kafka import KafkaProducer
 from kafka.errors import KafkaError
 from kafka.client import KafkaClient
 
-
 def initialize():
     with open('data/config.json') as config_data:
         config = json.load(config_data)
@@ -27,18 +26,16 @@ def initialize():
 
 class TwitterStreamListener(tweepy.StreamListener):
     def __init__(self):
-      self.producer = KafkaProducer(bootstrap_servers='localhost:9092')
+      self.producer = KafkaProducer(bootstrap_servers='docker:9092', value_serializer=lambda v: json.dumps(v))
+      self.tweets = []
 
     def on_data(self, data):
       text_i = data.find("text")
       source_i = data.find("source")
-      text = data[text_i + 8: source_i].decode('utf_8')
-      msg = Util.normalize(text)
-
-      self.producer.send('iphone', msg)
+      text = data[text_i + 8: source_i].decode('ascii')
+      print(text)
+      self.producer.send('iphone', text)
       self.producer.flush()
-
-      print('sent ' + msg)
 
     def on_error(self, status_code):
         if status_code == 420:
