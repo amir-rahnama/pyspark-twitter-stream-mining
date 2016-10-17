@@ -30,12 +30,10 @@ class TwitterStreamListener(tweepy.StreamListener):
       self.tweets = []
 
     def on_data(self, data):
-      text_i = data.find("text")
-      source_i = data.find("source")
-      text = data[text_i + 8: source_i].decode('ascii')
-      print(text)
+      text = json.loads(data)[u'text']
       self.producer.send('iphone', text)
       self.producer.flush()
+      print(text)
 
     def on_error(self, status_code):
         if status_code == 420:
